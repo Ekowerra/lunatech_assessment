@@ -85,8 +85,8 @@ class HomeController @Inject()(cc: ControllerComponents, ws : WSClient)
       case Some(country) => airportRepository.findByCountryCode(country.code).flatMap {
         airports => runwayRepository.findByAirportsRef(airports.map(_.id)).map {
           runways => {
-            val output = airports.map(airport => (airport.name, runways.filter(runway => runway.airportRef == airport.id).map(_.id)))
-            Ok(output.toString)
+            val output = airports.map(airport => (airport, runways.filter(runway => runway.airportRef == airport.id)))
+            Ok(views.html.airports(output))
           }
         }
       }
