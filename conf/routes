@@ -11,5 +11,9 @@ GET     /message                    controllers.AsyncController.message
 
 GET     /test                       controllers.HomeController.test
 
+GET     /airports                   controllers.HomeController.getAirports
+GET     /countries                   controllers.HomeController.getCountries
+GET     /runways                   controllers.HomeController.getRunways
+
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.versioned(path="/public", file: Asset)
