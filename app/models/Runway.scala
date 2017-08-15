@@ -112,4 +112,16 @@ class RunwayRepository @Inject()(dbapi: DBApi)(implicit ec: DatabaseExecutionCon
     }
   }
 
+  def findByAirportsRef(refs : List[Long]): Future[List[Runway]] = Future {
+    db.withConnection { implicit connection =>
+      SQL("select * from runway where airport_ref in ({refs})").on('refs -> refs).as(simple *)
+    }
+  }
+
+  def findByAirportsIdent(refs : List[String]): Future[List[Runway]] = Future {
+    db.withConnection { implicit connection =>
+      SQL("select * from runway where airport_ident in ({refs})").on('refs -> refs).as(simple *)
+    }
+  }
+
 }

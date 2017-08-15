@@ -13,6 +13,8 @@ GET     /test                       controllers.HomeController.test
 
 GET     /airports                   controllers.HomeController.getAirports
 GET     /airports/:code                   controllers.HomeController.getAirportsByCountryCode(code : String)
+GET     /country/:input             controllers.HomeController.getAirportsByCountryCodeOrName(input : String)
+GET     /lunatech                   controllers.HomeController.getAirportsAndRunawaysByCountryCodeOrName(input : String)
 
 GET     /form                       controllers.HomeController.getForm
 

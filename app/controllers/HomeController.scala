@@ -2,13 +2,14 @@ package controllers
 
 import javax.inject._
 
-import models.{AirportRepository, CountryRepository, RunwayRepository}
+import models._
 import play.api.data.Form
 import play.api.data.Forms._
 import play.api.libs.ws.WSClient
 import play.api.mvc._
 
 import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
 
 /**
  * This controller creates an `Action` to handle HTTP requests to the
@@ -51,17 +52,13 @@ class HomeController @Inject()(cc: ControllerComponents, ws : WSClient)
         Redirect(routes.HomeController.getForm())
       },
       input => {
-        Redirect(routes.HomeController.getAirportsByCountryCode(input))
+        Redirect(routes.HomeController.getAirportsAndRunawaysByCountryCodeOrName(input))
       }
     )
   }
 
   def getAirports = Action.async { implicit request =>
     airportRepository.findAll().map(list => Ok(list.toString))
-  }
-
-  def getAirportsByCountryCode(code : String) = Action.async { implicit request =>
-    airportRepository.findByCountryCode(code).map(list => Ok(list.toString))
   }
 
   def getCountries = Action.async { implicit request =>
@@ -71,5 +68,32 @@ class HomeController @Inject()(cc: ControllerComponents, ws : WSClient)
   def getRunways = Action.async { implicit request =>
     runwayRepository.findAll().map(list => Ok(list.toString))
   }
+
+  def getAirportsByCountryCode(code : String) = Action.async { implicit request =>
+    airportRepository.findByCountryCode(code).map(list => Ok(list.toString))
+  }
+
+  def getAirportsByCountryCodeOrName(input : String) = Action.async { implicit request =>
+    countryRepository.findByNameOrCode(input).map {
+      case Some(country) => Redirect(routes.HomeController.getAirportsByCountryCode(country.code))
+      case None => Redirect(routes.HomeController.getForm())
+    }
+  }
+
+  def getAirportsAndRunawaysByCountryCodeOrName(input : String) = Action.async { implicit request =>
+    countryRepository.findByNameOrCode(input).flatMap {
+      case Some(country) => airportRepository.findByCountryCode(country.code).flatMap {
+        airports => runwayRepository.findByAirportsRef(airports.map(_.id)).map {
+          runways => {
+            val output = airports.map(airport => (airport.name, runways.filter(runway => runway.airportRef == airport.id).map(_.id)))
+            Ok(output.toString)
+          }
+        }
+      }
+      case None => Future.successful(Redirect(routes.HomeController.getForm()))
+    }
+
+  }
+
 
 }

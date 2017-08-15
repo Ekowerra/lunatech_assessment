@@ -48,4 +48,10 @@ class CountryRepository @Inject()(dbapi: DBApi)(implicit ec: DatabaseExecutionCo
     }
   }
 
+  def findByNameOrCode(input : String) : Future[Option[Country]] = Future {
+    db.withConnection { implicit connection =>
+      SQL("select * from country where code = {input} or name = {input}").on('input -> input).as(simple.singleOpt)
+    }
+  }
+
 }
