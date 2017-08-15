@@ -1,0 +1,12 @@
+@()(implicit request: Request[Any])
+
+@main("Find the airports") {
+<fieldset>
+    <legend>Please give the country code or name</legend>
+    <form action="@routes.HomeController.findAirports" method="POST">
+        @helper.CSRF.formField
+    <input type="text" name="input">
+    <input type="submit" value="Find" id="submit"/>
+</form>
+</fieldset>
+}

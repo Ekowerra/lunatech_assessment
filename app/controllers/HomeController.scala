@@ -3,6 +3,8 @@ package controllers
 import javax.inject._
 
 import models.{AirportRepository, CountryRepository, RunwayRepository}
+import play.api.data.Form
+import play.api.data.Forms._
 import play.api.libs.ws.WSClient
 import play.api.mvc._
 
@@ -34,8 +36,32 @@ class HomeController @Inject()(cc: ControllerComponents, ws : WSClient)
     response.map(x => Ok(x.body))
   }
 
+  def getForm = Action { implicit request =>
+    Ok(views.html.form())
+  }
+
+  def findAirports = Action { implicit request =>
+    val singleForm = Form(
+      single(
+        "input" -> nonEmptyText
+      )
+    )
+    singleForm.bindFromRequest.fold(
+      _ => {
+        Redirect(routes.HomeController.getForm())
+      },
+      input => {
+        Redirect(routes.HomeController.getAirportsByCountryCode(input))
+      }
+    )
+  }
+
   def getAirports = Action.async { implicit request =>
     airportRepository.findAll().map(list => Ok(list.toString))
+  }
+
+  def getAirportsByCountryCode(code : String) = Action.async { implicit request =>
+    airportRepository.findByCountryCode(code).map(list => Ok(list.toString))
   }
 
   def getCountries = Action.async { implicit request =>

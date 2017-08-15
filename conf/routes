@@ -12,6 +12,12 @@ GET     /message                    controllers.AsyncController.message
 GET     /test                       controllers.HomeController.test
 
 GET     /airports                   controllers.HomeController.getAirports
+GET     /airports/:code                   controllers.HomeController.getAirportsByCountryCode(code : String)
+
+GET     /form                       controllers.HomeController.getForm
+
+POST    /airports                   controllers.HomeController.findAirports
+
 GET     /countries                   controllers.HomeController.getCountries
 GET     /runways                   controllers.HomeController.getRunways
 

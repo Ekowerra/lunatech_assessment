@@ -71,4 +71,16 @@ class AirportRepository @Inject()(dbapi: DBApi)(implicit ec: DatabaseExecutionCo
       SQL("select * from airport").as(simple *)
     }
   }
+
+  def findByCountryName(name : String) : Future[List[Airport]] = Future {
+    db.withConnection { implicit connection =>
+      SQL("select * from airport where name = {name}").on('name -> name).as(simple *)
+    }
+  }
+
+  def findByCountryCode(code : String) : Future[List[Airport]] = Future {
+    db.withConnection { implicit connection =>
+      SQL("select * from airport where iso_country = {code}").on('code -> code).as(simple *)
+    }
+  }
 }
