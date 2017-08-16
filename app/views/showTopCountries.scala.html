@@ -1,0 +1,43 @@
+@(topTen : List[(String, Int)], bottomTen : List[(String,Int)])
+
+@main("Here the top and bottom") {
+<table class="table-bordered">
+    <caption>Top Ten Countries</caption>
+    <thead>
+    <tr>
+        <th>Country</th>
+        <th>Number of Airports</th>
+    </tr>
+    </thead>
+    <tbody>
+    @for(countryN <- topTen) {
+    @defining(countryN) {case (country,number) =>
+    <tr>
+        <td>@country</td>
+        <td>@number</td>
+    </tr>
+    }
+    }
+    </tbody>
+</table>
+
+<table class="table-bordered">
+    <caption>Bottom Ten Countries</caption>
+    <thead>
+    <tr>
+        <th>Country</th>
+        <th>Number of Airports</th>
+    </tr>
+    </thead>
+    <tbody>
+    @for(countryN <- bottomTen) {
+    @defining(countryN) {case (country,number) =>
+    <tr>
+        <td>@country</td>
+        <td>@number</td>
+    </tr>
+    }
+    }
+    </tbody>
+</table>
+}
