@@ -95,5 +95,13 @@ class HomeController @Inject()(cc: ControllerComponents, ws : WSClient)
 
   }
 
+  def getHighestNumberOfAirports = Action.async {
+    airportRepository.findAll().map(airports => {
+      val completeList = airports.groupBy(airport => airport.isoCountry).mapValues(_.length).toList
+      val listSorted = completeList.sortWith((x,y) => x._2 > y._2)
+      Ok(views.html.showTopCountries(listSorted.take(10), listSorted.takeRight(10)))
+    })
+  }
+
 
 }
