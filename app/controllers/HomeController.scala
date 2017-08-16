@@ -5,26 +5,19 @@ import javax.inject._
 import models._
 import play.api.data.Form
 import play.api.data.Forms._
-import play.api.libs.ws.WSClient
 import play.api.mvc._
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 @Singleton
-class HomeController @Inject()(cc: ControllerComponents, ws : WSClient)
+class HomeController @Inject()(cc: ControllerComponents)
                               (airportRepository: AirportRepository,
                                countryRepository: CountryRepository,
                               runwayRepository: RunwayRepository) extends AbstractController(cc) {
 
   def index = Action {
     Ok(views.html.index("Your new application is ready."))
-  }
-
-  def test = Action.async {
-    val request = ws.url("https://api-adresse.data.gouv.fr/search/?q=8 bd du port")
-    val response = request.get()
-    response.map(x => Ok(x.body))
   }
 
   def getForm = Action { implicit request =>
