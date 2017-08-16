@@ -12,18 +12,19 @@ GET     /message                    controllers.AsyncController.message
 GET     /test                       controllers.HomeController.test
 
 GET     /airports                   controllers.HomeController.getAirports
-GET     /airports/:code                   controllers.HomeController.getAirportsByCountryCode(code : String)
+GET     /airports/:code             controllers.HomeController.getAirportsByCountryCode(code : String)
 GET     /country/:input             controllers.HomeController.getAirportsByCountryCodeOrName(input : String)
-GET     /airportsOfCountry                   controllers.HomeController.getAirportsAndRunawaysByCountryCodeOrName(input : String)
+GET     /airportsOfCountry          controllers.HomeController.getAirportsAndRunawaysByCountryCodeOrName(input : String)
 GET     /top                        controllers.HomeController.getHighestNumberOfAirports
 
 GET     /form                       controllers.HomeController.getForm
+GET     /reports                    controllers.HomeController.getReport
 
 POST    /airports                   controllers.HomeController.findAirports
 
 GET     /countries                   controllers.HomeController.getCountries
-GET     /countries/runways                   controllers.HomeController.sortRunways
-GET     /runways                   controllers.HomeController.getRunways
+GET     /countries/runways           controllers.HomeController.sortRunways
+GET     /runways                     controllers.HomeController.getRunways
 
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.versioned(path="/public", file: Asset)
