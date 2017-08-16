@@ -97,10 +97,24 @@ class HomeController @Inject()(cc: ControllerComponents, ws : WSClient)
 
   def getHighestNumberOfAirports = Action.async {
     airportRepository.findAll().map(airports => {
-      val completeList = airports.groupBy(airport => airport.isoCountry).mapValues(_.length).toList
+      val completeList = airports.groupBy(_.isoCountry).mapValues(_.length).toList
       val listSorted = completeList.sortWith((x,y) => x._2 > y._2)
       Ok(views.html.showTopCountries(listSorted.take(10), listSorted.takeRight(10)))
     })
+  }
+
+
+  def sortRunways = Action.async {
+    val futRunways = runwayRepository.findAll().map(_.groupBy(_.airportRef))
+    val futAirports = airportRepository.findAll().map(_.groupBy(_.isoCountry).mapValues(_.map(_.id)))
+    futAirports.zipWith(futRunways)((airports,runways) => airports.toList.map {
+      case (key,list) => (key, list.foldLeft(List[String]())((acc,elem) => acc ++ runways.getOrElse(elem, List()).foldLeft(List[String]()){
+        (acc2, elem2) => elem2.surface match {
+          case Some(s) if !(acc ++ acc2).contains(s) => acc2 :+ s
+          case _ => acc2
+        }
+      }))
+    }).map(list => Ok(views.html.showRunways(list)))
   }
 
 

@@ -1,0 +1,23 @@
+@(runwaysC : List[(String, List[String])])
+
+@main("Here the runways per countries") {
+    <table class="table-bordered">
+        <caption>Runways Data</caption>
+        <thead>
+        <tr>
+            <th>Country Name</th>
+            <th>Runways</th>
+        </tr>
+        </thead>
+        <tbody>
+        @for(runwaysT <- runwaysC) {
+            @defining(runwaysT) {case (country,runways) =>
+            <tr>
+                <td>@country</td>
+                <td>@runways.map(", " + _)</td>
+            </tr>
+            }
+        }
+        </tbody>
+    </table>
+}

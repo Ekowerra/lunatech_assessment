@@ -22,6 +22,7 @@ GET     /form                       controllers.HomeController.getForm
 POST    /airports                   controllers.HomeController.findAirports
 
 GET     /countries                   controllers.HomeController.getCountries
+GET     /countries/runways                   controllers.HomeController.sortRunways
 GET     /runways                   controllers.HomeController.getRunways
 
 # Map static resources from the /public folder to the /assets URL path
