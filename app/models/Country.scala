@@ -2,11 +2,8 @@ package models
 
 import javax.inject.Inject
 
-import anorm._
 import anorm.SqlParser._
-import play.api.data._
-import play.api.data.Forms._
-import play.api.data.validation.Constraints._
+import anorm._
 import play.api.db.DBApi
 
 import scala.concurrent.Future
@@ -48,7 +45,7 @@ class CountryRepository @Inject()(dbapi: DBApi)(implicit ec: DatabaseExecutionCo
     }
   }
 
-  def findByNameOrCode(input : String) : Future[Option[Country]] = Future {
+  def findByNameOrCode(input: String): Future[Option[Country]] = Future {
     db.withConnection { implicit connection =>
       SQL("select * from country where code = {input} or name = {input}").on('input -> input).as(simple.singleOpt)
     }

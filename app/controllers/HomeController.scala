@@ -14,7 +14,7 @@ import scala.concurrent.Future
 class HomeController @Inject()(cc: ControllerComponents)
                               (airportRepository: AirportRepository,
                                countryRepository: CountryRepository,
-                              runwayRepository: RunwayRepository) extends AbstractController(cc) {
+                               runwayRepository: RunwayRepository) extends AbstractController(cc) {
 
   def index = Action {
     Ok(views.html.index("Index"))
@@ -56,26 +56,27 @@ class HomeController @Inject()(cc: ControllerComponents)
     runwayRepository.findAll().map(list => Ok(list.toString))
   }
 
-  def getAirportsByCountryCode(code : String) = Action.async { implicit request =>
+  def getAirportsByCountryCode(code: String) = Action.async { implicit request =>
     airportRepository.findByCountryCode(code).map(list => Ok(list.toString))
   }
 
-  def getAirportsByCountryCodeOrName(input : String) = Action.async { implicit request =>
+  def getAirportsByCountryCodeOrName(input: String) = Action.async { implicit request =>
     countryRepository.findByNameOrCode(input).map {
       case Some(country) => Redirect(routes.HomeController.getAirportsByCountryCode(country.code))
       case None => Redirect(routes.HomeController.getForm())
     }
   }
 
-  def getAirportsAndRunawaysByCountryCodeOrName(input : String) = Action.async { implicit request =>
+  def getAirportsAndRunawaysByCountryCodeOrName(input: String) = Action.async { implicit request =>
     countryRepository.findByNameOrCode(input).flatMap {
       case Some(country) => airportRepository.findByCountryCode(country.code).flatMap {
-        airports => runwayRepository.findByAirportsRef(airports.map(_.id)).map {
-          runways => {
-            val output = airports.map(airport => (airport, runways.filter(runway => runway.airportRef == airport.id)))
-            Ok(views.html.airports(output))
+        airports =>
+          runwayRepository.findByAirportsRef(airports.map(_.id)).map {
+            runways => {
+              val output = airports.map(airport => (airport, runways.filter(runway => runway.airportRef == airport.id)))
+              Ok(views.html.airports(output))
+            }
           }
-        }
       }
       case None => Future.successful(Redirect(routes.HomeController.getForm()))
     }
@@ -85,8 +86,8 @@ class HomeController @Inject()(cc: ControllerComponents)
   def getHighestNumberOfAirports = Action.async {
     airportRepository.findAll().map(airports => {
       val completeList = airports.groupBy(_.isoCountry).mapValues(_.length).toList
-      val listSorted = completeList.sortWith((x,y) => x._2 > y._2)
-      Ok(views.html.showTopCountries(listSorted.take(10), listSorted.reverse.takeWhile(_._2 <= 1 )))
+      val listSorted = completeList.sortWith((x, y) => x._2 > y._2)
+      Ok(views.html.showTopCountries(listSorted.take(10), listSorted.reverse.takeWhile(_._2 <= 1)))
     })
   }
 
@@ -94,12 +95,13 @@ class HomeController @Inject()(cc: ControllerComponents)
   def sortRunways = Action.async {
     val futRunways = runwayRepository.findAll().map(_.groupBy(_.airportRef))
     val futAirports = airportRepository.findAll().map(_.groupBy(_.isoCountry).mapValues(_.map(_.id)))
-    futAirports.zipWith(futRunways)((airports,runways) => airports.toList.map {
-      case (key,list) => (key, list.foldLeft(List[String]())((acc,elem) => acc ++ runways.getOrElse(elem, List()).foldLeft(List[String]()){
-        (acc2, elem2) => elem2.surface match {
-          case Some(s) if !(acc ++ acc2).contains(s) => acc2 :+ s
-          case _ => acc2
-        }
+    futAirports.zipWith(futRunways)((airports, runways) => airports.toList.map {
+      case (key, list) => (key, list.foldLeft(List[String]())((acc, elem) => acc ++ runways.getOrElse(elem, List()).foldLeft(List[String]()) {
+        (acc2, elem2) =>
+          elem2.surface match {
+            case Some(s) if !(acc ++ acc2).contains(s) => acc2 :+ s
+            case _ => acc2
+          }
       }))
     }).map(list => Ok(views.html.showRunways(list)))
   }
