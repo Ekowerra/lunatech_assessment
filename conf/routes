@@ -2,6 +2,7 @@
 # This file defines all application routes (Higher priority routes first)
 # ~~~~
 
+# Required routes
 GET     /                           controllers.HomeController.index
 
 GET     /form                       controllers.HomeController.getForm
@@ -10,16 +11,16 @@ GET     /airports/:code             controllers.HomeController.getAirportsByCoun
 
 GET     /reports                    controllers.HomeController.getReport
 GET     /countries/airports         controllers.HomeController.getHighestNumberOfAirports
-GET     /countries/runways           controllers.HomeController.sortRunways
+GET     /countries/runways          controllers.HomeController.sortRunways
 
-# Map static resources from the /public folder to the /assets URL path
+# Map static resources from the /public folder to the /assets URL path (required also)
 GET     /assets/*file               controllers.Assets.versioned(path="/public", file: Asset)
 
 
-
-GET     /countries                   controllers.HomeController.getCountries
+# Other routes I created to test Play 2.6 and my queries
+GET     /countries                  controllers.HomeController.getCountries
 GET     /country/:input             controllers.HomeController.getAirportsByCountryCodeOrName(input : String)
 GET     /airports                   controllers.HomeController.getAirports
 GET     /airportsOfCountry          controllers.HomeController.getAirportsAndRunawaysByCountryCodeOrName(input : String)
-GET     /runways                     controllers.HomeController.getRunways
+GET     /runways                    controllers.HomeController.getRunways
 
