@@ -86,7 +86,7 @@ class HomeController @Inject()(cc: ControllerComponents)
     airportRepository.findAll().map(airports => {
       val completeList = airports.groupBy(_.isoCountry).mapValues(_.length).toList
       val listSorted = completeList.sortWith((x,y) => x._2 > y._2)
-      Ok(views.html.showTopCountries(listSorted.take(10), listSorted.takeRight(10)))
+      Ok(views.html.showTopCountries(listSorted.take(10), listSorted.reverse.takeWhile(_._2 <= 1 )))
     })
   }
 

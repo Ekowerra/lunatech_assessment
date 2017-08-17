@@ -1,12 +1,12 @@
 @(airports : List[(Airport, List[Runway])])
 
 @main("Here the airports") {
-    <table class="table-bordered">
-        <caption>Airports Data</caption>
+    <table class="width">
+        <caption><h1>Airports Data</h1></caption>
         <thead>
         <tr>
             <th>Airport Name</th>
-            <th>Id Runways</th>
+            <th>Runways Type</th>
         </tr>
         </thead>
         <tbody>
@@ -14,7 +14,7 @@
             @defining(airportT) {case (airport,runways) =>
             <tr>
                 <td>@airport.name</td>
-                <td>@runways.map(", " + _.id.toString)</td>
+                <td>@for(runway <- runways.take(runways.length-1)) { @runway.surface, } @runways.lastOption.map(_.surface).getOrElse("")</td>
             </tr>
             }
         }
