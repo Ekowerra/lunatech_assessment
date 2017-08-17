@@ -17,7 +17,7 @@ class HomeController @Inject()(cc: ControllerComponents)
                               runwayRepository: RunwayRepository) extends AbstractController(cc) {
 
   def index = Action {
-    Ok(views.html.index("Your new application is ready."))
+    Ok(views.html.index("Index"))
   }
 
   def getForm = Action { implicit request =>
@@ -36,7 +36,7 @@ class HomeController @Inject()(cc: ControllerComponents)
     )
     singleForm.bindFromRequest.fold(
       _ => {
-        Redirect(routes.HomeController.getForm())
+        BadRequest(views.html.form())
       },
       input => {
         Redirect(routes.HomeController.getAirportsAndRunawaysByCountryCodeOrName(input))
