@@ -2,7 +2,7 @@
 
 @main("Find the airports") {
 <fieldset>
-    <legend>Please give the country code or name</legend>
+    <legend><h2>Please give the country code or name</h2></legend>
     <form action="@routes.HomeController.findAirports" method="POST">
         @helper.CSRF.formField
     <input type="text" name="input">
