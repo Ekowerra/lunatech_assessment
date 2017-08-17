@@ -1,7 +1,8 @@
 @(topTen : List[(String, Int)], bottomTen : List[(String,Int)])
 
 @main("Here the top and bottom") {
-<table class="table-bordered">
+<div class="center">
+<table>
     <caption>Top Ten Countries</caption>
     <thead>
     <tr>
@@ -21,7 +22,7 @@
     </tbody>
 </table>
 
-<table class="table-bordered">
+<table>
     <caption>Bottom Ten Countries</caption>
     <thead>
     <tr>
@@ -40,4 +41,5 @@
     }
     </tbody>
 </table>
+</div>
 }
