@@ -20,7 +20,7 @@ class HomeController @Inject()(cc: ControllerComponents)
     Ok(views.html.index("Index"))
   }
 
-  def getForm = Action { implicit request =>
+  def getForm() = Action { implicit request =>
     Ok(views.html.form())
   }
 
@@ -44,28 +44,6 @@ class HomeController @Inject()(cc: ControllerComponents)
     )
   }
 
-  def getAirports = Action.async { implicit request =>
-    airportRepository.findAll().map(list => Ok(list.toString))
-  }
-
-  def getCountries = Action.async { implicit request =>
-    countryRepository.findAll().map(list => Ok(list.toString))
-  }
-
-  def getRunways = Action.async { implicit request =>
-    runwayRepository.findAll().map(list => Ok(list.toString))
-  }
-
-  def getAirportsByCountryCode(code: String) = Action.async { implicit request =>
-    airportRepository.findByCountryCode(code).map(list => Ok(list.toString))
-  }
-
-  def getAirportsByCountryCodeOrName(input: String) = Action.async { implicit request =>
-    countryRepository.findByNameOrCode(input).map {
-      case Some(country) => Redirect(routes.HomeController.getAirportsByCountryCode(country.code))
-      case None => Redirect(routes.HomeController.getForm())
-    }
-  }
 
   def getAirportsAndRunawaysByCountryCodeOrName(input: String) = Action.async { implicit request =>
     countryRepository.findByNameOrCode(input).flatMap {
@@ -78,7 +56,7 @@ class HomeController @Inject()(cc: ControllerComponents)
             }
           }
       }
-      case None => Future.successful(Redirect(routes.HomeController.getForm()))
+      case None => Future.successful(Redirect(routes.HomeController.getForm()).flashing("error" -> "Country not found"))
     }
 
   }
@@ -106,5 +84,29 @@ class HomeController @Inject()(cc: ControllerComponents)
     }).map(list => Ok(views.html.showRunways(list)))
   }
 
+  //**************NOT USED METHODS FOR THE ASSESSMENT*******************************************//
+
+  def getAirports = Action.async { implicit request =>
+    airportRepository.findAll().map(list => Ok(list.toString))
+  }
+
+  def getCountries = Action.async { implicit request =>
+    countryRepository.findAll().map(list => Ok(list.toString))
+  }
+
+  def getRunways = Action.async { implicit request =>
+    runwayRepository.findAll().map(list => Ok(list.toString))
+  }
+
+  def getAirportsByCountryCode(code: String) = Action.async { implicit request =>
+    airportRepository.findByCountryCode(code).map(list => Ok(list.toString))
+  }
+
+  def getAirportsByCountryCodeOrName(input: String) = Action.async { implicit request =>
+    countryRepository.findByNameOrCode(input).map {
+      case Some(country) => Redirect(routes.HomeController.getAirportsByCountryCode(country.code))
+      case None => Redirect(routes.HomeController.getForm())
+    }
+  }
 
 }
