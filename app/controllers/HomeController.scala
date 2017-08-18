@@ -62,12 +62,20 @@ class HomeController @Inject()(cc: ControllerComponents)
   }
 
   def getHighestNumberOfAirports = Action.async {
-    airportRepository.findAll().map(airports => {
-      val completeList = airports.groupBy(_.isoCountry).mapValues(_.length).toList
-      val listSorted = completeList.sortWith((x, y) => x._2 > y._2)
-      Ok(views.html.showTopCountries(listSorted.take(10), listSorted.reverse.takeWhile(_._2 <= 1)))
+    val futCountries = countryRepository.findAll().map(_.map(_.code))
+    val futAirports = airportRepository.findAll().map(airports => {
+      airports.groupBy(_.isoCountry).mapValues(_.length).toList
     })
-  }
+    futAirports.zipWith(futCountries)((airports,countries) => {
+      val listSorted = airports.sortWith((x, y) => x._2 > y._2)
+      val noAirport = countries.filter(code => !airports.map(_._1).contains(code))
+      if (noAirport.isEmpty) {
+        Ok(views.html.showTopCountries(listSorted.take(10), listSorted.reverse.takeWhile(_._2 <= 1)))
+      } else {
+        Ok(views.html.showTopCountries(listSorted.take(10), noAirport.map((_,0))))
+      }
+    }
+    )}
 
 
   def sortRunways = Action.async {
